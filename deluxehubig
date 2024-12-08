@@ -1,1 +1,296 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
+local Window = Rayfield:CreateWindow({
+   Name = "Deluxe Hub",
+   LoadingTitle = "Deluxe Hub",
+   LoadingSubtitle = "by ViXVI",
+   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Deluxe Hub"
+   },
+
+   Discord = {
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+
+   KeySystem = true, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Deluxe Hub | Key System",
+      Subtitle = "Key System",
+      Note = "Join My Discord Server", -- Use this to tell the user how to get a key
+      FileName = "DeluxeHubKeySystem", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = true, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"https://pastebin.com/raw/a0RsZF9j"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local MainTab = Window:CreateTab("Main", nil) -- Title, Image
+local MainSection = MainTab:CreateSection("Main")
+
+Rayfield:Notify({
+   Title = "Hub Succesfully Executed",
+   Content = "Deluxe Hub",
+   Duration = 5,
+   Image = nil,
+   Actions = { -- Notification Buttons
+
+      Ignore = { -- Duplicate this table (or remove it) to add and remove buttons to the notification.
+         Name = "Okay",
+         Callback = function()
+            print("The user tapped Okay")
+         end
+      },
+
+},
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Fly",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/YSL3xKYU'))()
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Noclip",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/cEWctHPb'))()
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Infinite Jump",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/Aa4YNLQ4'))()
+   end,
+})
+
+local Slider = MainTab:CreateSlider({
+   Name = "Walkspeed",
+   Range = {0, 250},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+   end,
+})
+
+local Slider = MainTab:CreateSlider({
+   Name = "Jump Power",
+   Range = {0, 250},
+   Increment = 1,
+   Suffix = "Power",
+   CurrentValue = 50,
+   Flag = "Slider2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)
+   end,
+})
+
+local AdminTab = Window:CreateTab("Admin", nil) -- Title, Image
+local AdminSection = AdminTab:CreateSection("Admin")
+
+local Button = AdminTab:CreateButton({
+   Name = "Nameless Admin",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Infinite Yield",
+   Callback = function()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'),true))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Fedora Admin",
+   Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/alexx1212/fedoratoomutch/main/toomucth'))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Cmd X",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source", true))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Proton Admin",
+   Callback = function()
+        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/5e6e6cc1bb32fd926764d064e2c60a3b.lua"))()
+   end,
+})
+
+local HubsTab = Window:CreateTab("Hubs", nil) -- Title, Image
+local HubsSection = HubsTab:CreateSection("Hubs")
+
+local Button = HubsTab:CreateButton({
+   Name = "Deluxe TSB Hub",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/qfA8d9DJ'))()
+   end,
+})
+
+local MiscTab = Window:CreateTab("Misc", nil) -- Title, Image
+local MiscSection = MiscTab:CreateSection("Misc")
+
+local Button = MiscTab:CreateButton({
+   Name = "Destroy Gui",
+   Callback = function()
+        Rayfield:Destroy()   
+   end,
+})
+
+local Button = MiscTab:CreateButton({
+   Name = "Chat Bypass",
+   Callback = function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/xe7Hmykq"))()
+   end,
+})
+
+local Button = MiscTab:CreateButton({
+   Name = "Invisibility",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))()
+   end,
+})
+
+local Toggle = MiscTab:CreateToggle({
+   Name = "ESP",
+   CurrentValue = false,
+   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        -- Table of colours to choose from
+local colourTable = {
+    Green = Color3.fromRGB(0, 255, 0),
+    Blue = Color3.fromRGB(0, 0, 255),
+    Red = Color3.fromRGB(255, 0, 0),
+    Yellow = Color3.fromRGB(255, 255, 0),
+    Orange = Color3.fromRGB(255, 165, 0),
+    Purple = Color3.fromRGB(128, 0, 128)
+}
+local colourChosen = colourTable.Yellow -- Change "Red" to whatever colour you like from the table above, feel free to add other colours as well.
+_G.ESPToggle = (Value) -- This is the variable used for enabling/disabling ESP. If you are using a GUI library, or your own custom GUI, then set this variable to the callback function. 
+
+-- Services and lp
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+
+local function getCharacter(player)
+    return Workspace:FindFirstChild(player.Name)
+end
+
+-- Add highlights to players
+local function addHighlightToCharacter(player, character)
+    if player == LocalPlayer then return end  -- Skip local player
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if humanoidRootPart and not humanoidRootPart:FindFirstChild("Highlight") then
+        local highlightClone = Instance.new("Highlight")  -- Create a new Highlight instance
+        highlightClone.Name = "Highlight"
+        highlightClone.Adornee = character
+        highlightClone.Parent = humanoidRootPart
+        highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlightClone.FillColor = colourChosen
+        highlightClone.OutlineColor = Color3.fromRGB(255, 255, 255)
+        highlightClone.FillTransparency = 0.5
+    end
+end
+
+-- Remove highlights from player
+local function removeHighlightFromCharacter(character)
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if humanoidRootPart then
+        local highlightInstance = humanoidRootPart:FindFirstChild("Highlight")
+        if highlightInstance then
+            highlightInstance:Destroy()
+        end
+    end
+end
+
+-- Function to update highlights based on the value of _G.ESPToggle
+local function updateHighlights()
+    for _, player in pairs(Players:GetPlayers()) do
+        local character = getCharacter(player)
+        if character then
+            if _G.ESPToggle then
+                addHighlightToCharacter(player, character)
+            else
+                removeHighlightFromCharacter(character)
+            end
+        end
+    end
+end
+
+-- Connect events through RenderStepped to loop
+RunService.RenderStepped:Connect(function()
+    updateHighlights()
+end)
+
+-- Add highlight to joining players
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        if _G.ESPToggle then
+            addHighlightToCharacter(player, character)
+        end
+    end)
+end)
+
+-- Remove highlights from leaving players
+Players.PlayerRemoving:Connect(function(playerRemoved)
+    local character = playerRemoved.Character
+    if character then
+        removeHighlightFromCharacter(character)
+    end
+end)
+   end,
+})
+
+local ServerTab = Window:CreateTab("Server", nil) -- Title, Image
+local ServerSection = MiscTab:CreateSection("Server")
+
+local Button = ServerTab:CreateButton({
+   Name = "Rejoin",
+   Callback = function()
+       loadstring(game:HttpGet("https://pastebin.com/raw/R8v8hfcT"))() 
+   end,
+})
+
+local Button = ServerTab:CreateButton({
+   Name = "Join Smallest Server",
+   Callback = function()
+       loadstring(game:HttpGet("https://pastebin.com/ze1NtMkp"))() 
+   end,
+})
+
+local ToolsTab = Window:CreateTab("Tools",nil) -- Title, Image
+local ToolsSection = MiscTab:CreateSection("Tools")
+
+local Button = ToolsTab:CreateButton({
+   Name = "Dex Explorer",
+   Callback = function()
+        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Keyless-mobile-dex-17888"))()
+   end,
+})
+
+local CreditsTab = Window:CreateTab("Credits", nil) -- Title, Image
+local CreditsSection = CreditsTab:CreateSection("Credits")
+
+local Paragraph = CreditsTab:CreateParagraph({Title = "Credits", Content = "ViXVI, Rayfield"})
