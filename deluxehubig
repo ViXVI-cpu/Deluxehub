@@ -98,79 +98,9 @@ local Slider = MainTab:CreateSlider({
    end,
 })
 
-local AdminTab = Window:CreateTab("Admin", nil) -- Title, Image
-local AdminSection = AdminTab:CreateSection("Admin")
+local OthersSection = MainTab:CreateSection("Others")
 
-local Button = AdminTab:CreateButton({
-   Name = "Nameless Admin",
-   Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"))()
-   end,
-})
-
-local Button = AdminTab:CreateButton({
-   Name = "Infinite Yield",
-   Callback = function()
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'),true))()
-   end,
-})
-
-local Button = AdminTab:CreateButton({
-   Name = "Fedora Admin",
-   Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/alexx1212/fedoratoomutch/main/toomucth'))()
-   end,
-})
-
-local Button = AdminTab:CreateButton({
-   Name = "Cmd X",
-   Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source", true))()
-   end,
-})
-
-local Button = AdminTab:CreateButton({
-   Name = "Proton Admin",
-   Callback = function()
-        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/5e6e6cc1bb32fd926764d064e2c60a3b.lua"))()
-   end,
-})
-
-local HubsTab = Window:CreateTab("Hubs", nil) -- Title, Image
-local HubsSection = HubsTab:CreateSection("Hubs")
-
-local Button = HubsTab:CreateButton({
-   Name = "Deluxe TSB Hub",
-   Callback = function()
-        loadstring(game:HttpGet('https://pastebin.com/raw/qfA8d9DJ'))()
-   end,
-})
-
-local MiscTab = Window:CreateTab("Misc", nil) -- Title, Image
-local MiscSection = MiscTab:CreateSection("Misc")
-
-local Button = MiscTab:CreateButton({
-   Name = "Destroy Gui",
-   Callback = function()
-        Rayfield:Destroy()   
-   end,
-})
-
-local Button = MiscTab:CreateButton({
-   Name = "Chat Bypass",
-   Callback = function()
-        loadstring(game:HttpGet("https://pastebin.com/raw/xe7Hmykq"))()
-   end,
-})
-
-local Button = MiscTab:CreateButton({
-   Name = "Invisibility",
-   Callback = function()
-        loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))()
-   end,
-})
-
-local Toggle = MiscTab:CreateToggle({
+local Toggle = MainTab:CreateToggle({
    Name = "ESP",
    CurrentValue = false,
    Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -263,6 +193,71 @@ end)
    end,
 })
 
+local Button = MainTab:CreateButton({
+   Name = "Invisibility",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))()
+   end,
+})
+
+local AdminTab = Window:CreateTab("Admin", nil) -- Title, Image
+local AdminSection = AdminTab:CreateSection("Admin")
+
+local Button = AdminTab:CreateButton({
+   Name = "Nameless Admin",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Infinite Yield",
+   Callback = function()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'),true))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Fedora Admin",
+   Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/alexx1212/fedoratoomutch/main/toomucth'))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Cmd X",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source", true))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Proton Admin",
+   Callback = function()
+        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/5e6e6cc1bb32fd926764d064e2c60a3b.lua"))()
+   end,
+})
+
+local HubsTab = Window:CreateTab("Hubs", nil) -- Title, Image
+local HubsSection = HubsTab:CreateSection("Hubs")
+
+local Button = HubsTab:CreateButton({
+   Name = "Deluxe TSB Hub",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/qfA8d9DJ'))()
+   end,
+})
+
+local MiscTab = Window:CreateTab("Misc", nil) -- Title, Image
+local MiscSection = MiscTab:CreateSection("Misc")
+
+local Button = MiscTab:CreateButton({
+   Name = "Chat Bypass",
+   Callback = function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/xe7Hmykq"))()
+   end,
+})
+
 local ServerTab = Window:CreateTab("Server", nil) -- Title, Image
 local ServerSection = MiscTab:CreateSection("Server")
 
@@ -287,6 +282,23 @@ local Button = ToolsTab:CreateButton({
    Name = "Dex Explorer",
    Callback = function()
         loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Keyless-mobile-dex-17888"))()
+   end,
+})
+
+local GUITab = Window:CreateTab("GUI", nil) -- Title, Image
+local GUISection = GUITab:CreateSection("GUI")
+
+local Button = GUITab:CreateButton({
+   Name = "Destroy Gui",
+   Callback = function()
+        Rayfield:Destroy()   
+   end,
+})
+
+local Button = GUITab:CreateButton({
+   Name = "Update Gui",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ViXVI-cpu/Deluxehub/refs/heads/main/deluxehubig"))()   
    end,
 })
 
