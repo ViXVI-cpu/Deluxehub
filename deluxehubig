@@ -259,7 +259,7 @@ local Button = MiscTab:CreateButton({
 })
 
 local ServerTab = Window:CreateTab("Server", nil) -- Title, Image
-local ServerSection = MiscTab:CreateSection("Server")
+local ServerSection = ServerTab:CreateSection("Server")
 
 local Button = ServerTab:CreateButton({
    Name = "Rejoin",
@@ -276,7 +276,7 @@ local Button = ServerTab:CreateButton({
 })
 
 local ToolsTab = Window:CreateTab("Tools",nil) -- Title, Image
-local ToolsSection = MiscTab:CreateSection("Tools")
+local ToolsSection = ToolsTab:CreateSection("Tools")
 
 local Button = ToolsTab:CreateButton({
    Name = "Dex Explorer",
