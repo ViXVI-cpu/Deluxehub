@@ -190,32 +190,12 @@ local function removeUsername(character)
     end
 end
 
-local function updateDistance(player, character)
-    if not character then return end
- 
-    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-    local localRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
- 
-    if humanoidRootPart and localRootPart then
-        local distance = (localRootPart.Position - humanoidRootPart.Position).magnitude
-        local usernameTag = character:FindFirstChild("UsernameTag")
- 
-        if usernameTag then
-            local textLabel = usernameTag:FindFirstChild("UsernameLabel")
-            if textLabel then
-                textLabel.Text = string.format("%s [%.1f Studs]", player.Name, distance)
-            end
-        end
-    end
-end
-
 -- Function to update highlights based on the value of _G.ESPToggle
 local function updateHighlights()
     for _, player in pairs(Players:GetPlayers()) do
         local character = getCharacter(player)
         if character then
             if _G.ESPToggle then
-                updateDistance(player, character)
                 addHighlightToCharacter(player, character)
             else
                 removeHighlightFromCharacter(character)
