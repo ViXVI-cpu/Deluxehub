@@ -105,7 +105,7 @@ local Toggle = MainTab:CreateToggle({
    CurrentValue = false,
    Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
-        -- Sigma
+       -- Color Table for ESP Colors
 local colourTable = {
     Green = Color3.fromRGB(0, 255, 0),
     Blue = Color3.fromRGB(0, 0, 255),
@@ -114,162 +114,131 @@ local colourTable = {
     Orange = Color3.fromRGB(255, 165, 0),
     Purple = Color3.fromRGB(128, 0, 128)
 }
+local colourChosen = colourTable.Yellow -- Change this to your preferred color
 
-_G.ESPToggle = (Value) -- Default ESP toggle state (on)
-_G.ESPColor = colourTable.Yellow -- Default ESP color
+-- ESP Toggle Variable
+_G.ESPToggle = (Value) -- Change to 'true' to enable ESP or 'false' to disable ESP
 
--- Services
+-- Services and Local Player
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
+-- Get the player's character
 local function getCharacter(player)
     return player.Character or Workspace:FindFirstChild(player.Name)
 end
 
--- Function to create a username tag above the player's head
-local function addUsernameTag(player, character)
-    if character:FindFirstChild("UsernameTag") then return end -- Avoid duplicates
+-- Create Billboard GUI for username and distance
+local function createBillboard(player, character)
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if humanoidRootPart and not character:FindFirstChild("ESPBillboard") then
+        local billboardGui = Instance.new("BillboardGui")
+        billboardGui.Name = "ESPBillboard"
+        billboardGui.Parent = character
+        billboardGui.Adornee = humanoidRootPart
+        billboardGui.Size = UDim2.new(0, 200, 0, 50) -- Size of the billboard
+        billboardGui.StudsOffset = Vector3.new(0, 3, 0) -- Position above player
+        billboardGui.AlwaysOnTop = true
 
-    local billboardGui = Instance.new("BillboardGui")
-    billboardGui.Name = "UsernameTag"
-    billboardGui.Adornee = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("Head")
-    billboardGui.Size = UDim2.new(0, 200, 0, 50) -- Width x Height
-    billboardGui.StudsOffset = Vector3.new(0, 3, 0) -- Position above head
-    billboardGui.AlwaysOnTop = true -- Always visible
-    billboardGui.Parent = character
-
-    local textLabel = Instance.new("TextLabel")
-    textLabel.Parent = billboardGui
-    textLabel.Size = UDim2.new(1, 0, 1, 0) -- Fill the entire GUI
-    textLabel.BackgroundTransparency = 1 -- No background
-    textLabel.Text = player.Name -- Show player's username
-    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
-    textLabel.TextStrokeTransparency = 0 -- Outline the text for visibility
-    textLabel.TextScaled = true -- Make text automatically fit the space
-    textLabel.Font = Enum.Font.GothamBold -- Font style
-    textLabel.Name = "UsernameLabel" -- Name the label for easier access
+        local textLabel = Instance.new("TextLabel")
+        textLabel.Parent = billboardGui
+        textLabel.Size = UDim2.new(1, 0, 1, 0)
+        textLabel.BackgroundTransparency = 1
+        textLabel.TextColor3 = Color3.new(1, 1, 1) -- White text color
+        textLabel.Font = Enum.Font.SourceSansBold
+        textLabel.TextSize = 16
+        textLabel.Text = player.DisplayName .. " (0 studs)" -- Initial text (will be updated)
+    end
 end
 
--- Function to add highlights and username tag
-local function addHighlightToCharacter(player, character)
-    if player == LocalPlayer then return end  -- Skip local player
+-- Update the Billboard GUI (update username and distance)
+local function updateBillboard(player, character)
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    local billboardGui = character:FindFirstChild("ESPBillboard")
 
-    -- Add the highlight
-    local highlightClone = character:FindFirstChild("Highlight")
-    if not highlightClone then
-        highlightClone = Instance.new("Highlight")
+    if billboardGui and humanoidRootPart and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local distance = (LocalPlayer.Character.HumanoidRootPart.Position - humanoidRootPart.Position).magnitude
+        local textLabel = billboardGui:FindFirstChildOfClass("TextLabel")
+        if textLabel then
+            textLabel.Text = string.format("%s (%.0f studs)", player.DisplayName, distance) -- Display in studs
+        end
+    end
+end
+
+-- Add highlight and billboard to a player's character
+local function addESPToCharacter(player, character)
+    if player == LocalPlayer then return end -- Skip the local player
+    if not character then return end -- Ensure character exists
+
+    -- Add highlight to the character
+    if not character:FindFirstChild("Highlight") then
+        local highlightClone = Instance.new("Highlight")
         highlightClone.Name = "Highlight"
         highlightClone.Adornee = character
-        highlightClone.Parent = character -- Attach to the entire character
+        highlightClone.Parent = character
         highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        highlightClone.FillColor = _G.ESPColor
+        highlightClone.FillColor = colourChosen
         highlightClone.OutlineColor = Color3.fromRGB(255, 255, 255)
         highlightClone.FillTransparency = 0.5
-    else
-        highlightClone.FillColor = _G.ESPColor -- Update color dynamically
     end
 
-    -- Add the username tag
-    addUsernameTag(player, character)
+    -- Add Billboard with username and distance
+    createBillboard(player, character)
 end
 
--- Remove highlights and username tags
-local function removeHighlightFromCharacter(character)
+-- Remove ESP (highlights and billboard) from a player's character
+local function removeESPFromCharacter(character)
     if character then
         local highlightInstance = character:FindFirstChild("Highlight")
         if highlightInstance then
             highlightInstance:Destroy()
         end
 
-        local usernameTag = character:FindFirstChild("UsernameTag")
-        if usernameTag then
-            usernameTag:Destroy()
+        local billboardInstance = character:FindFirstChild("ESPBillboard")
+        if billboardInstance then
+            billboardInstance:Destroy()
         end
     end
 end
 
--- Function to update username tag with distance
-local function updateDistance(player, character)
-    if not character then return end
-
-    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-    local localRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-
-    if humanoidRootPart and localRootPart then
-        local distance = (localRootPart.Position - humanoidRootPart.Position).magnitude
-        local usernameTag = character:FindFirstChild("UsernameTag")
-        
-        if usernameTag then
-            local textLabel = usernameTag:FindFirstChild("UsernameLabel")
-            if textLabel then
-                textLabel.Text = string.format("%s [%.1f Studs]", player.Name, distance)
-            end
-        end
-    end
-end
-
--- Function to update highlights and distances
-local function updateHighlights()
+-- Function to update ESP for all players
+local function updateESP()
     for _, player in pairs(Players:GetPlayers()) do
         local character = getCharacter(player)
         if character then
             if _G.ESPToggle then
-                addHighlightToCharacter(player, character)
-                updateDistance(player, character)
+                addESPToCharacter(player, character)
+                updateBillboard(player, character)
             else
-                removeHighlightFromCharacter(character)
+                removeESPFromCharacter(character)
             end
         end
     end
 end
 
--- Update distances for all players on every frame
-RunService.RenderStepped:Connect(function()
-    if _G.ESPToggle then
-        for _, player in pairs(Players:GetPlayers()) do
-            local character = getCharacter(player)
-            if character then
-                updateDistance(player, character)
-            end
-        end
-    end
-end)
-
--- Add highlight and username tag to new players when they join
+-- Detect new players joining and apply ESP if enabled
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
         if _G.ESPToggle then
-            addHighlightToCharacter(player, character)
+            addESPToCharacter(player, character)
         end
     end)
 end)
 
--- Remove highlights and username tags when players leave
-Players.PlayerRemoving:Connect(function(player)
-    local character = player.Character
+-- Remove highlights for players who leave
+Players.PlayerRemoving:Connect(function(playerRemoved)
+    local character = getCharacter(playerRemoved)
     if character then
-        removeHighlightFromCharacter(character)
+        removeESPFromCharacter(character)
     end
 end)
 
--- **NEW FEATURE**: Handle existing players who were in the game when the script starts
-for _, player in pairs(Players:GetPlayers()) do
-    if player ~= LocalPlayer then -- Skip the local player
-        local character = getCharacter(player)
-        if character then
-            addHighlightToCharacter(player, character)
-        end
-
-        -- Attach a listener for players whose character respawns
-        player.CharacterAdded:Connect(function(character)
-            if _G.ESPToggle then
-                addHighlightToCharacter(player, character)
-            end
-        end)
-    end
-end
+-- Update ESP every frame
+RunService.RenderStepped:Connect(function()
+    updateESP()
+end)
    end,
 })
 
