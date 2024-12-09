@@ -277,7 +277,9 @@ else
     textLabel.TextColor3 = Color3.fromRGB(0, 255, 0) -- Green
 end
 
-if not _G.ESPToggle then
+if _G.ESPToggle then
+    addHighlightToCharacter(player, character)
+else
     removeHighlightFromCharacter(character)
 end
    end,
