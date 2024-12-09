@@ -105,7 +105,7 @@ local Toggle = MainTab:CreateToggle({
    CurrentValue = false,
    Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
-        -- Table of colours to choose from
+        -- Sigma
 local colourTable = {
     Green = Color3.fromRGB(0, 255, 0),
     Blue = Color3.fromRGB(0, 0, 255),
@@ -114,21 +114,21 @@ local colourTable = {
     Orange = Color3.fromRGB(255, 165, 0),
     Purple = Color3.fromRGB(128, 0, 128)
 }
-local colourChosen = colourTable.Yellow -- Change "Red" to whatever colour you like from the table above, feel free to add other colours as well.
-_G.ESPToggle = (Value) -- This is the variable used for enabling/disabling ESP. If you are using a GUI library, or your own custom GUI, then set this variable to the callback function. 
 
--- Services and lp
+_G.ESPToggle = (Value) -- Default ESP toggle state (on)
+_G.ESPColor = colourTable.Yellow -- Default ESP color
+
+-- Services
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
-local show = false
 
 local function getCharacter(player)
-    return Workspace:FindFirstChild(player.Name)
+    return player.Character or Workspace:FindFirstChild(player.Name)
 end
 
+-- Function to create a username tag above the player's head
 local function addUsernameTag(player, character)
     if character:FindFirstChild("UsernameTag") then return end -- Avoid duplicates
 
@@ -149,54 +149,75 @@ local function addUsernameTag(player, character)
     textLabel.TextStrokeTransparency = 0 -- Outline the text for visibility
     textLabel.TextScaled = true -- Make text automatically fit the space
     textLabel.Font = Enum.Font.GothamBold -- Font style
+    textLabel.Name = "UsernameLabel" -- Name the label for easier access
 end
 
--- Add highlights to players
+-- Function to add highlights and username tag
 local function addHighlightToCharacter(player, character)
     if player == LocalPlayer then return end  -- Skip local player
-    show = true
-    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-    if humanoidRootPart and not humanoidRootPart:FindFirstChild("Highlight") then
-        local highlightClone = Instance.new("Highlight")  -- Create a new Highlight instance
+
+    -- Add the highlight
+    local highlightClone = character:FindFirstChild("Highlight")
+    if not highlightClone then
+        highlightClone = Instance.new("Highlight")
         highlightClone.Name = "Highlight"
         highlightClone.Adornee = character
-        highlightClone.Parent = humanoidRootPart
+        highlightClone.Parent = character -- Attach to the entire character
         highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        highlightClone.FillColor = colourChosen
+        highlightClone.FillColor = _G.ESPColor
         highlightClone.OutlineColor = Color3.fromRGB(255, 255, 255)
         highlightClone.FillTransparency = 0.5
+    else
+        highlightClone.FillColor = _G.ESPColor -- Update color dynamically
     end
-end
 
-if show then
+    -- Add the username tag
     addUsernameTag(player, character)
 end
 
--- Remove highlights from player
+-- Remove highlights and username tags
 local function removeHighlightFromCharacter(character)
-    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-    if humanoidRootPart then
-        local highlightInstance = humanoidRootPart:FindFirstChild("Highlight")
+    if character then
+        local highlightInstance = character:FindFirstChild("Highlight")
         if highlightInstance then
             highlightInstance:Destroy()
+        end
+
+        local usernameTag = character:FindFirstChild("UsernameTag")
+        if usernameTag then
+            usernameTag:Destroy()
         end
     end
 end
 
-local function removeUsername(character)
-    local usernameTag = character:FindFirstChild("UsernameTag")
-    if usernameTag then
-       usernameTag:Destroy()
+-- Function to update username tag with distance
+local function updateDistance(player, character)
+    if not character then return end
+
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    local localRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+    if humanoidRootPart and localRootPart then
+        local distance = (localRootPart.Position - humanoidRootPart.Position).magnitude
+        local usernameTag = character:FindFirstChild("UsernameTag")
+        
+        if usernameTag then
+            local textLabel = usernameTag:FindFirstChild("UsernameLabel")
+            if textLabel then
+                textLabel.Text = string.format("%s [%.1f Studs]", player.Name, distance)
+            end
+        end
     end
 end
 
--- Function to update highlights based on the value of _G.ESPToggle
+-- Function to update highlights and distances
 local function updateHighlights()
     for _, player in pairs(Players:GetPlayers()) do
         local character = getCharacter(player)
         if character then
             if _G.ESPToggle then
                 addHighlightToCharacter(player, character)
+                updateDistance(player, character)
             else
                 removeHighlightFromCharacter(character)
             end
@@ -204,12 +225,19 @@ local function updateHighlights()
     end
 end
 
--- Connect events through RenderStepped to loop
+-- Update distances for all players on every frame
 RunService.RenderStepped:Connect(function()
-    updateHighlights()
+    if _G.ESPToggle then
+        for _, player in pairs(Players:GetPlayers()) do
+            local character = getCharacter(player)
+            if character then
+                updateDistance(player, character)
+            end
+        end
+    end
 end)
 
--- Add highlight to joining players
+-- Add highlight and username tag to new players when they join
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
         if _G.ESPToggle then
@@ -218,14 +246,30 @@ Players.PlayerAdded:Connect(function(player)
     end)
 end)
 
--- Remove highlights from leaving players
-Players.PlayerRemoving:Connect(function(playerRemoved)
-    local character = playerRemoved.Character
+-- Remove highlights and username tags when players leave
+Players.PlayerRemoving:Connect(function(player)
+    local character = player.Character
     if character then
         removeHighlightFromCharacter(character)
-        removeUsername(character)
     end
 end)
+
+-- **NEW FEATURE**: Handle existing players who were in the game when the script starts
+for _, player in pairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then -- Skip the local player
+        local character = getCharacter(player)
+        if character then
+            addHighlightToCharacter(player, character)
+        end
+
+        -- Attach a listener for players whose character respawns
+        player.CharacterAdded:Connect(function(character)
+            if _G.ESPToggle then
+                addHighlightToCharacter(player, character)
+            end
+        end)
+    end
+end
    end,
 })
 
@@ -300,14 +344,14 @@ local ServerSection = ServerTab:CreateSection("Server")
 local Button = ServerTab:CreateButton({
    Name = "Rejoin",
    Callback = function()
-       loadstring(game:HttpGet("https://pastebin.com/raw/R8v8hfcT"))() 
+       loadstring(game:HttpGet('https://pastebin.com/raw/R8v8hfcT'))() 
    end,
 })
 
 local Button = ServerTab:CreateButton({
    Name = "Join Smallest Server",
    Callback = function()
-       loadstring(game:HttpGet("https://pastebin.com/ze1NtMkp"))() 
+       loadstring(game:HttpGet('https://pastebin.com/ze1NtMkp'))() 
    end,
 })
 
