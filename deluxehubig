@@ -270,6 +270,16 @@ for _, player in pairs(Players:GetPlayers()) do
         end)
     end
 end
+
+if distance < 30 then
+    textLabel.TextColor3 = Color3.fromRGB(255, 0, 0) -- Red
+else
+    textLabel.TextColor3 = Color3.fromRGB(0, 255, 0) -- Green
+end
+
+if not _G.ESPToggle then
+    removeHighlightFromCharacter(character)
+end
    end,
 })
 
