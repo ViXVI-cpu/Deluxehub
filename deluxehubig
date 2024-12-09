@@ -249,6 +249,13 @@ local Button = MainTab:CreateButton({
    end,
 })
 
+local Button = MainTab:CreateButton({
+   Name = "Aimbot",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Aepione/Prensado/refs/heads/main/Prensado%20camlock"))()
+   end,
+})
+
 local AdminTab = Window:CreateTab("Admin", nil) -- Title, Image
 local AdminSection = AdminTab:CreateSection("Admin")
 
