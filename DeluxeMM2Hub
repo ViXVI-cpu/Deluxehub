@@ -355,11 +355,11 @@ local Button = GUITab:CreateButton({
 local Button = GUITab:CreateButton({
    Name = "Update Gui",
    Callback = function()
-        loadstring(game:HttpGet('https://pastebin.com/raw/NRu1B7EK'))()  
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ViXVI-cpu/Deluxehub/refs/heads/main/DeluxeMM2Hub"))()
    end,
 })
 
 local CreditsTab = Window:CreateTab("Credits", nil) -- Title, Image
 local CreditsSection = CreditsTab:CreateSection("Credits")
 
-local Paragraph = CreditsTab:CreateParagraph({Title = "Credits", Content = "Vi
+local Paragraph = CreditsTab:CreateParagraph({Title = "Credits", Content = "ViXVI, Rayfield"
