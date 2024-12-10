@@ -1,0 +1,365 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+if game.PlaceId
+local Window = Rayfield:CreateWindow({
+   Name = "Deluxe Hub",
+   LoadingTitle = "Deluxe Hub",
+   LoadingSubtitle = "by ViXVI",
+   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Deluxe Hub"
+   },
+
+   Discord = {
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+
+   KeySystem = true, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Deluxe MM2 Hub | Key System",
+      Subtitle = "Key System",
+      Note = "Join My Discord Server", -- Use this to tell the user how to get a key
+      FileName = "DeluxeHubMM2KeySystem", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = true, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"https://pastebin.com/raw/a0RsZF9j"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local MainTab = Window:CreateTab("Main", nil) -- Title, Image
+local MainSection = MainTab:CreateSection("Main")
+
+Rayfield:Notify({
+   Title = "Hub Succesfully Executed",
+   Content = "Deluxe Hub",
+   Duration = 5,
+   Image = nil,
+   Actions = { -- Notification Buttons
+
+      Ignore = { -- Duplicate this table (or remove it) to add and remove buttons to the notification.
+         Name = "Okay",
+         Callback = function()
+            print("The user tapped Okay")
+         end
+      },
+
+},
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Fly",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/YSL3xKYU'))()
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Noclip",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/cEWctHPb'))()
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Infinite Jump",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/Aa4YNLQ4'))()
+   end,
+})
+
+local Slider = MainTab:CreateSlider({
+   Name = "Walkspeed",
+   Range = {0, 250},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+   end,
+})
+
+local Slider = MainTab:CreateSlider({
+   Name = "Jump Power",
+   Range = {0, 250},
+   Increment = 1,
+   Suffix = "Power",
+   CurrentValue = 50,
+   Flag = "Slider2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)
+   end,
+})
+
+local OthersSection = MainTab:CreateSection("Others")
+
+local Toggle = MainTab:CreateToggle({
+   Name = "ESP",
+   CurrentValue = false,
+   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+       -- Color Table for ESP Colors
+local colourTable = {
+    Green = Color3.fromRGB(0, 255, 0),
+    Blue = Color3.fromRGB(0, 0, 255),
+    Red = Color3.fromRGB(255, 0, 0),
+    Yellow = Color3.fromRGB(255, 255, 0),
+    Orange = Color3.fromRGB(255, 165, 0),
+    Purple = Color3.fromRGB(128, 0, 128)
+}
+local colourChosen = colourTable.Yellow -- Change this to your preferred color
+
+-- ESP Toggle Variable
+_G.ESPToggle = (Value) -- Change to 'true' to enable ESP or 'false' to disable ESP
+
+-- Services and Local Player
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+
+-- Get the player's character
+local function getCharacter(player)
+    return player.Character or Workspace:FindFirstChild(player.Name)
+end
+
+-- Create Billboard GUI for username and distance
+local function createBillboard(player, character)
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if humanoidRootPart and not character:FindFirstChild("ESPBillboard") then
+        local billboardGui = Instance.new("BillboardGui")
+        billboardGui.Name = "ESPBillboard"
+        billboardGui.Parent = character
+        billboardGui.Adornee = humanoidRootPart
+        billboardGui.Size = UDim2.new(0, 200, 0, 50) -- Size of the billboard
+        billboardGui.StudsOffset = Vector3.new(0, 3, 0) -- Position above player
+        billboardGui.AlwaysOnTop = true
+
+        local textLabel = Instance.new("TextLabel")
+        textLabel.Parent = billboardGui
+        textLabel.Size = UDim2.new(1, 0, 1, 0)
+        textLabel.BackgroundTransparency = 1
+        textLabel.TextColor3 = Color3.new(1, 1, 1) -- White text color
+        textLabel.Font = Enum.Font.SourceSansBold
+        textLabel.TextSize = 16
+        textLabel.Text = player.DisplayName .. " (0 studs)" -- Initial text (will be updated)
+    end
+end
+
+-- Update the Billboard GUI (update username and distance)
+local function updateBillboard(player, character)
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    local billboardGui = character:FindFirstChild("ESPBillboard")
+
+    if billboardGui and humanoidRootPart and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local distance = (LocalPlayer.Character.HumanoidRootPart.Position - humanoidRootPart.Position).magnitude
+        local textLabel = billboardGui:FindFirstChildOfClass("TextLabel")
+        if textLabel then
+            textLabel.Text = string.format("%s (%.0f studs)", player.DisplayName, distance) -- Display in studs
+        end
+    end
+end
+
+-- Add highlight and billboard to a player's character
+local function addESPToCharacter(player, character)
+    if player == LocalPlayer then return end -- Skip the local player
+    if not character then return end -- Ensure character exists
+
+    -- Add highlight to the character
+    if not character:FindFirstChild("Highlight") then
+        local highlightClone = Instance.new("Highlight")
+        highlightClone.Name = "Highlight"
+        highlightClone.Adornee = character
+        highlightClone.Parent = character
+        highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlightClone.FillColor = colourChosen
+        highlightClone.OutlineColor = Color3.fromRGB(255, 255, 255)
+        highlightClone.FillTransparency = 0.5
+    end
+
+    -- Add Billboard with username and distance
+    createBillboard(player, character)
+end
+
+-- Remove ESP (highlights and billboard) from a player's character
+local function removeESPFromCharacter(character)
+    if character then
+        local highlightInstance = character:FindFirstChild("Highlight")
+        if highlightInstance then
+            highlightInstance:Destroy()
+        end
+
+        local billboardInstance = character:FindFirstChild("ESPBillboard")
+        if billboardInstance then
+            billboardInstance:Destroy()
+        end
+    end
+end
+
+-- Function to update ESP for all players
+local function updateESP()
+    for _, player in pairs(Players:GetPlayers()) do
+        local character = getCharacter(player)
+        if character then
+            if _G.ESPToggle then
+                addESPToCharacter(player, character)
+                updateBillboard(player, character)
+            else
+                removeESPFromCharacter(character)
+            end
+        end
+    end
+end
+
+-- Detect new players joining and apply ESP if enabled
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        if _G.ESPToggle then
+            addESPToCharacter(player, character)
+        end
+    end)
+end)
+
+-- Remove highlights for players who leave
+Players.PlayerRemoving:Connect(function(playerRemoved)
+    local character = getCharacter(playerRemoved)
+    if character then
+        removeESPFromCharacter(character)
+    end
+end)
+
+-- Update ESP every frame
+RunService.RenderStepped:Connect(function()
+    updateESP()
+end)
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Invisibility",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))()
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Aimbot",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Aepione/Prensado/refs/heads/main/Prensado%20camlock"))()
+   end,
+})
+
+local AdminTab = Window:CreateTab("Admin", nil) -- Title, Image
+local AdminSection = AdminTab:CreateSection("Admin")
+
+local Button = AdminTab:CreateButton({
+   Name = "Nameless Admin",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Infinite Yield",
+   Callback = function()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'),true))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Fedora Admin",
+   Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/alexx1212/fedoratoomutch/main/toomucth'))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Cmd X",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source", true))()
+   end,
+})
+
+local Button = AdminTab:CreateButton({
+   Name = "Proton Admin",
+   Callback = function()
+        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/5e6e6cc1bb32fd926764d064e2c60a3b.lua"))()
+   end,
+})
+
+local HubsTab = Window:CreateTab("Hubs", nil) -- Title, Image
+local HubsSection = HubsTab:CreateSection("Hubs")
+
+local Button = HubsTab:CreateButton({
+   Name = "Deluxe Hub",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/NRu1B7EK'))()
+   end,
+})
+
+local MiscTab = Window:CreateTab("Misc", nil) -- Title, Image
+local MiscSection = MiscTab:CreateSection("Misc")
+
+local Button = MiscTab:CreateButton({
+   Name = "Chat Bypass",
+   Callback = function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/xe7Hmykq"))()
+   end,
+})
+
+local ServerTab = Window:CreateTab("Server", nil) -- Title, Image
+local ServerSection = ServerTab:CreateSection("Server")
+
+local Button = ServerTab:CreateButton({
+   Name = "Rejoin",
+   Callback = function()
+       loadstring(game:HttpGet('https://pastebin.com/raw/R8v8hfcT'))() 
+   end,
+})
+
+local Button = ServerTab:CreateButton({
+   Name = "Join Smallest Server",
+   Callback = function()
+       loadstring(game:HttpGet('https://pastebin.com/raw/ze1NtMkp'))() 
+   end,
+})
+
+local ToolsTab = Window:CreateTab("Tools",nil) -- Title, Image
+local ToolsSection = ToolsTab:CreateSection("Tools")
+
+local Button = ToolsTab:CreateButton({
+   Name = "Dex Explorer",
+   Callback = function()
+        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Keyless-mobile-dex-17888"))()
+   end,
+})
+
+local GUITab = Window:CreateTab("GUI", nil) -- Title, Image
+local GUISection = GUITab:CreateSection("GUI")
+
+local Button = GUITab:CreateButton({
+   Name = "Destroy Gui",
+   Callback = function()
+        Rayfield:Destroy()   
+   end,
+})
+
+local Button = GUITab:CreateButton({
+   Name = "Update Gui",
+   Callback = function()
+        loadstring(game:HttpGet('https://pastebin.com/raw/NRu1B7EK'))()  
+   end,
+})
+
+local CreditsTab = Window:CreateTab("Credits", nil) -- Title, Image
+local CreditsSection = CreditsTab:CreateSection("Credits")
+
+local Paragraph = CreditsTab:CreateParagraph({Title = "Credits", Content = "Vi
