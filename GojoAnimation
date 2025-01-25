@@ -77,7 +77,8 @@ Credit.TextStrokeTransparency = 0
 Credit.TextWrapped = true
 
 Toggle.MouseButton1Click:connect(function()
-	print("wag")
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ViXVI-cpu/Regular-Scripts/refs/heads/main/Gojo%20Animations(Hub)"))()
+    BG:Destroy()
 end)
 
 closebutton.MouseButton1Click:Connect(function()
